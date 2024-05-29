@@ -1,0 +1,39 @@
+name: DevContainer
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+jobs:
+  dev-container-publish:
+    permissions:
+      packages: write
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      - run: docker login -u ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }} ghcr.io
+      - run: |
+          docker context create builder
+          docker buildx create builder --name container --driver docker-container --use
+          docker buildx inspect --bootstrap --builder container
+      - run: |
+          docker buildx build . \
+            --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
+            --cache-from type=registry,ref=ghcr.io/${{ github.repository }}/dev-cache:py${{ matrix.python-version }} \
+            --cache-to type=registry,ref=ghcr.io/${{ github.repository }}/dev-cache:py${{ matrix.python-version }},mode=max \
+            --file .devcontainer/Dockerfile \
+            --provenance false \
+            --push \
+            --tag ghcr.io/${{ github.repository }}/dev:py${{ matrix.python-version }} \
+            --target dev
+    strategy:
+      matrix:
+        python-version:
+          - "3.11"
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .devcontainer/Dockerfile
+      - .devcontainer/Dockerfile.dockerignore
+      - .github/workflows/devcontainer.yml
+  workflow_dispatch: null

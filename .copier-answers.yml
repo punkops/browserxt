@@ -1,0 +1,25 @@
+_commit: v0.0.52
+_src_path: gh:serious-scaffold/ss-python
+author_email: nsyntych@punkops.dev
+author_name: Nick Syntychakis
+copyright_holder: PunkOps
+copyright_license: Mozilla Public License 2.0 (MPL 2.0)
+copyright_year: "2024"
+coverage_threshold: 10
+default_py: "3.11"
+development_status: Alpha
+max_py: "3.11"
+min_py: "3.11"
+module_name: browserxt
+organization_name: PunkOps
+package_name: browserxt
+platforms:
+  - macos
+  - ubuntu
+  - windows
+project_description: A simple extensible browser runner
+project_name: BrowserXT
+readme_content: "## A multiline README content here"
+repo_name: browserxt
+repo_namespace: punkops
+repo_platform: github

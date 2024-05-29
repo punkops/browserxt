@@ -1,0 +1,87 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+  push:
+    branches:
+      - main
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  ci:
+    if: ${{ !cancelled() && ! failure() }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        with:
+          fetch-depth: 0
+      - uses: pdm-project/setup-pdm@568ddd69406b30de1774ec0044b73ae06e716aa4 # v4
+        with:
+          cache: true
+          python-version: ${{ matrix.python-version }}
+          version: 2.15.2
+      - run: env | sort
+      - run: make dev
+      - run: make lint
+      - run: make test
+      - run: make doc
+      - run: make build
+    strategy:
+      matrix:
+        os:
+          # renovate: github-runner
+          - macos-14
+          # renovate: github-runner
+          - ubuntu-22.04
+          # renovate: github-runner
+          - windows-2022
+        python-version:
+          - '3.11'
+  semantic-release:
+    name: Semantic Release
+    runs-on: ubuntu-22.04
+    # Avoid semantic release for forked repository
+    if: github.event_name != 'pull_request' && github.repository == 'serious-scaffold/ss-python'
+    permissions:
+      contents: write
+      id-token: write
+      issues: write
+      pull-requests: write
+    needs:
+      - ci
+    steps:
+      - id: generate-token
+        name: Generate a token with GitHub App if App ID exists
+        if: vars.BOT_APP_ID
+        uses: actions/create-github-app-token@a0de6af83968303c8c955486bf9739a57d23c7f1 # v1.10.0
+        with:
+          app-id: ${{ vars.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+      - name: Warn if use GITHUB_TOKEN
+        run: |
+          if [ -z "${{ steps.generate-token.outputs.token || secrets.PAT }}" ]; then
+            echo "# :warning: GITHUB_TOKEN is used for semantic-release" >> $GITHUB_STEP_SUMMARY
+            echo "The GITHUB_TOKEN is used instead of a bot token or PAT and will not emit the released publish event for the released workflow." >> $GITHUB_STEP_SUMMARY
+          fi
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        with:
+          node-version: 'lts/*'
+      - name: Semantic Release
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token || secrets.PAT || secrets.GITHUB_TOKEN }}
+        run: >
+          npx
+          --package conventional-changelog-conventionalcommits@7.0.2
+          --package semantic-release@23.1.1
+          semantic-release

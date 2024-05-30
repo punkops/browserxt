@@ -16,20 +16,22 @@ BROWSERS = {
     "nt": {
         "chrome": [
             "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-            "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"
+            "C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe",
         ],
-        "brave": ["C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"],
+        "brave": [
+            "C:\\Program Files\\BraveSoftware\\Brave-Browser\\Application\\brave.exe"
+        ],
         "edge": [
             "C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe",
-            "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+            "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe",
         ],
-    }
+    },
 }
 
 BROWSER_LIST = ["chrome", "chromium", "brave", "edge"]
 
 
-class ExtensibleBrowser():
+class ExtensibleBrowser:
     def __init__(self, name="", options=[]):
         self.name = name
         self.set_options(options)
@@ -37,18 +39,22 @@ class ExtensibleBrowser():
     def set_options(self, options):
         self.options = options
         if "edge" in self.name:
-            self.options = [arg.replace("incognito", "inprivate")
-                            for arg in options]
+            self.options = [arg.replace("incognito", "inprivate") for arg in options]
 
     def open(self, url):
         cmdline = [self.name] + self.options + [url]
         try:
-            if os.name == 'nt':
+            if os.name == "nt":
                 p = subprocess.Popen(
-                    cmdline, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                    cmdline, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
+                )
             else:
                 p = subprocess.Popen(
-                    cmdline, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT, close_fds=True)
+                    cmdline,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.STDOUT,
+                    close_fds=True,
+                )
             return True
         except OSError:
             return False
@@ -56,9 +62,9 @@ class ExtensibleBrowser():
 
 class Browser:
     def __init__(self, prefered=[], options=[], wsl=False):
-        self.is_posix = os.name == 'posix'
-        self.is_nt = os.name == 'nt'
-        self.prefered = prefered+BROWSER_LIST
+        self.is_posix = os.name == "posix"
+        self.is_nt = os.name == "nt"
+        self.prefered = prefered + BROWSER_LIST
 
         # if wsl is True, then it will only use the WSL browsers and skip the windows ones
         self.is_wsl = not wsl & is_running_in_wsl()
@@ -91,11 +97,11 @@ class Browser:
                 for path in BROWSERS[os.name].get(browser, []):
                     path = shutil.which(path)
                     if path:
-                        self.register(
-                            browser, ExtensibleBrowser(path, self.options))
+                        self.register(browser, ExtensibleBrowser(path, self.options))
         except KeyError:
             raise NotImplementedError(
-                f"Browser registration not implemented for this platform: {os.name}")
+                f"Browser registration not implemented for this platform: {os.name}"
+            )
 
         if self.is_wsl:
             self._browsers = {}
@@ -103,8 +109,7 @@ class Browser:
                 for path in BROWSERS["nt"].get(browser, []):
                     path = shutil.which(wslPath.to_posix(path))
                     if path:
-                        self.register(
-                            browser, ExtensibleBrowser(path, self.options))
+                        self.register(browser, ExtensibleBrowser(path, self.options))
 
         self.register_chromium()
 

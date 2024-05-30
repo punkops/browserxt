@@ -17,6 +17,7 @@ classifiers = [
 dependencies = [
   "pydantic-settings",
   "typer[all]",
+  "wslPath"
 ]
 description = "A simple extensible browser runner"
 dynamic = [

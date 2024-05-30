@@ -4,7 +4,7 @@ from typer import main as typer_main
 from browserxt.browser import Browser
 from browserxt.utils import is_running_in_wsl
 
-app = Typer(context_settings={"help_option_names": ["-h", "--help"]})
+app = Typer()
 
 
 @app.command(

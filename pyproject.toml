@@ -3,7 +3,7 @@ build-backend = "pdm.backend"
 requires = ["pdm-backend==2.3.0"]
 
 [project]
-authors = [{email = "nsyntych@punkops.dev", name = "Nick Syntychakis"}]
+authors = [{ email = "nsyntych@punkops.dev", name = "Nick Syntychakis" }]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
@@ -19,13 +19,13 @@ keywords = [
   "project-template",
   "serious-scaffold",
 ]
-license = {text = "MPL-2.0"}
+license = { text = "MPL-2.0" }
 name = "browserxt"
 readme = "README.md"
 requires-python = ">=3.11"
 
 [project.scripts]
-browserxt-cli = "browserxt.cli:app"
+browserxt = "browserxt.cli:app"
 
 [project.urls]
 documentation = "https://punkops.github.io/browserxt"
@@ -85,16 +85,16 @@ src = ["src"]
 
 [tool.ruff.lint]
 select = [
-  "B", # flake8-bugbear
-  "D", # pydocstyle
-  "E", # pycodestyle error
-  "F", # Pyflakes
-  "I", # isort
+  "B",      # flake8-bugbear
+  "D",      # pydocstyle
+  "E",      # pycodestyle error
+  "F",      # Pyflakes
+  "I",      # isort
   "RUF100", # Unused noqa directive
-  "S", # flake8-bandit
-  "SIM", # flake8-simplify
-  "UP", # pyupgrade
-  "W", # pycodestyle warning
+  "S",      # flake8-bandit
+  "SIM",    # flake8-simplify
+  "UP",     # pyupgrade
+  "W",      # pycodestyle warning
 ]
 
 [tool.ruff.lint.per-file-ignores]

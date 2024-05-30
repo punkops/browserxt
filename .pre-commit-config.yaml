@@ -71,7 +71,7 @@ repos:
       #   types_or:
       #     - python
       #     - pyi
-        require_serial: true
+      # require_serial: true
       - id: toml-sort
         name: toml-sort
         entry: pdm run toml-sort

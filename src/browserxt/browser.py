@@ -2,7 +2,7 @@ import os
 import shutil
 import subprocess
 
-import wslPath
+import wslPath  # type: ignore[import-untyped]
 
 from browserxt.utils import is_running_in_wsl
 
@@ -32,16 +32,16 @@ BROWSER_LIST = ["chrome", "chromium", "brave", "edge"]
 
 
 class ExtensibleBrowser:
-    def __init__(self, name="", options=[]):
+    def __init__(self, name: str = "", options: list[str] = []) -> None:
         self.name = name
         self.set_options(options)
 
-    def set_options(self, options):
+    def set_options(self, options: list[str]) -> None:
         self.options = options
         if "edge" in self.name:
             self.options = [arg.replace("incognito", "inprivate") for arg in options]
 
-    def open(self, url):
+    def open(self, url: str) -> bool:
         cmdline = [self.name] + self.options + [url]
         try:
             if os.name == "nt":
@@ -61,24 +61,27 @@ class ExtensibleBrowser:
 
 
 class Browser:
-    def __init__(self, prefered=[], options=[], wsl=False):
+    def __init__(
+        self, prefered: list[str] = [], options: list[str] = [], wsl: bool = False
+    ) -> None:
         self.is_posix = os.name == "posix"
         self.is_nt = os.name == "nt"
         self.prefered = prefered + BROWSER_LIST
 
         # if wsl is True, then it will only use the WSL browsers and skip the windows ones
         self.is_wsl = not wsl & is_running_in_wsl()
-        self._browsers = {}
+        self._browsers = {}  # type: dict[str, ExtensibleBrowser]
         self.options = options
         self.register_standards_browsers()
 
-    def open(self, url, using=None):
+    def open(self, url: str, using: str = "") -> bool:
         browser = self.get(using)
         if browser is not None:
             return browser.open(url)
+        return False
 
-    def get(self, using=None):
-        if using is not None:
+    def get(self, using: str = "") -> ExtensibleBrowser | None:
+        if using is not "":
             alternatives = [using]
         else:
             alternatives = self.prefered
@@ -87,15 +90,16 @@ class Browser:
                 instance = self._browsers.get(browser, None)
                 if instance is not None:
                     return instance
+        return None
 
-    def register(self, name, instance=None):
-        self._browsers[name] = instance
+    def register(self, name: str, instance: ExtensibleBrowser | None) -> None:
+        self._browsers[name] = instance  # type: ignore[assignment]
 
-    def register_standards_browsers(self):
+    def register_standards_browsers(self) -> None:
         try:
             for browser in self.prefered:
                 for path in BROWSERS[os.name].get(browser, []):
-                    path = shutil.which(path)
+                    path = shutil.which(path)  # type: ignore[assignment]
                     if path:
                         self.register(browser, ExtensibleBrowser(path, self.options))
         except KeyError:
@@ -113,7 +117,7 @@ class Browser:
 
         self.register_chromium()
 
-    def register_chromium(self):
+    def register_chromium(self) -> None:
         if "chrome" not in self._browsers:
             if "chromium" in self._browsers:
                 self.register("chrome", self.get("chromium"))

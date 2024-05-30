@@ -31,8 +31,8 @@ def main(
     ),
 ) -> None:
     """Open a browser with specified positional arguments as options."""
-    browser = Browser(browser or [], options or [], wsl)
-    browser.open(url)
+    _browser = Browser(browser or [], options or [], wsl)
+    _browser.open(url)
 
 
 typer_click_object = typer_main.get_command(app)

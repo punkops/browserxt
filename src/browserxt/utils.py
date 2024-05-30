@@ -1,15 +1,15 @@
 import os
 
 
-def get_windows_username():
+def get_windows_username() -> str:
     return (
         os.popen("powershell.exe '$env:UserName'").read().strip()
         if is_running_in_wsl() and os.name != "nt"
-        else None
+        else ""
     )
 
 
-def is_running_in_wsl():
+def is_running_in_wsl() -> bool:
     try:
         with open("/proc/version") as f:
             version_info = f.read()

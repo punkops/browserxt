@@ -1,28 +1,18 @@
 [build-system]
 build-backend = "pdm.backend"
-requires = [
-  "pdm-backend==2.3.0",
-]
+requires = ["pdm-backend==2.3.0"]
 
 [project]
-authors = [
-  {email = "nsyntych@punkops.dev", name = "Nick Syntychakis"},
-]
+authors = [{email = "nsyntych@punkops.dev", name = "Nick Syntychakis"}]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
   "Operating System :: OS Independent",
   "Programming Language :: Python :: 3.11",
 ]
-dependencies = [
-  "pydantic-settings",
-  "typer[all]",
-  "wslPath",
-]
+dependencies = ["pydantic-settings", "typer[all]", "wslPath"]
 description = "A simple extensible browser runner"
-dynamic = [
-  "version",
-]
+dynamic = ["version"]
 keywords = [
   "copier-template",
   "full-development-lifecycle",
@@ -46,20 +36,14 @@ repository = "https://github.com/punkops/browserxt"
 fail_under = 10
 
 [tool.coverage.run]
-source = [
-  "browserxt",
-]
+source = ["browserxt"]
 
 [tool.mypy]
 check_untyped_defs = true
 disallow_any_unimported = true
 disallow_untyped_defs = true
-enable_error_code = [
-  "ignore-without-code",
-]
-exclude = [
-  "build",
-]
+enable_error_code = ["ignore-without-code"]
+exclude = ["build"]
 no_implicit_optional = true
 show_error_codes = true
 warn_return_any = true
@@ -81,15 +65,8 @@ doc = [
   "sphinx-click",
   "sphinx-design",
 ]
-lint = [
-  "mypy",
-  "ruff",
-  "toml-sort",
-]
-test = [
-  "coverage",
-  "pytest",
-]
+lint = ["mypy"]
+test = ["coverage", "pytest"]
 
 [tool.pdm.version]
 source = "scm"

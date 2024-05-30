@@ -1,4 +1,5 @@
 import os
+import sys
 
 
 def get_windows_username() -> str:
@@ -10,7 +11,7 @@ def get_windows_username() -> str:
 
 
 def is_running_in_wsl() -> bool:
-    if (os.environ.get("SKIP_WSL_CHECK") != None) | (os.name == "nt"):
+    if (os.environ.get("SKIP_WSL_CHECK") != None) | (sys.platform != "linux"):
         return False
     try:
         with open("/proc/version") as f:

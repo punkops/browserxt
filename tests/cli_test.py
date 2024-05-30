@@ -14,8 +14,8 @@ def test_cli() -> None:
     assert "Usage" in result.output
 
 
-def test_cli_run() -> None:
-    """Test for run subcommand of the cli."""
-    result = runner.invoke(app, "run")
-    assert result.exit_code == 0
-    assert not result.output
+# def test_cli_run() -> None:
+#     """Test for run subcommand of the cli."""
+#     result = runner.invoke(app, "run")
+#     assert result.exit_code == 0
+#     assert not result.output

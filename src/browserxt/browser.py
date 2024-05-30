@@ -81,7 +81,7 @@ class Browser:
         return False
 
     def get(self, using: str = "") -> ExtensibleBrowser | None:
-        if using is not "":
+        if using != "":
             alternatives = [using]
         else:
             alternatives = self.prefered

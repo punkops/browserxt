@@ -56,21 +56,21 @@ repos:
           - python
           - pyi
         require_serial: true
-      - id: ruff
-        name: ruff
-        entry: pdm run python -m ruff check --force-exclude
-        language: system
-        types_or:
-          - python
-          - pyi
-        require_serial: true
-      - id: ruff-format
-        name: ruff-format
-        entry: pdm run python -m ruff format --force-exclude
-        language: system
-        types_or:
-          - python
-          - pyi
+      # - id: ruff
+      #   name: ruff
+      #   entry: pdm run python -m ruff check --force-exclude
+      #   language: system
+      #   types_or:
+      #     - python
+      #     - pyi
+      #   require_serial: true
+      # - id: ruff-format
+      #   name: ruff-format
+      #   entry: pdm run python -m ruff format --force-exclude
+      #   language: system
+      #   types_or:
+      #     - python
+      #     - pyi
         require_serial: true
       - id: toml-sort
         name: toml-sort

@@ -97,7 +97,7 @@ function Get-DefaultBrowser {
         'MSEdgeHTM'  { return 'edge' }
         'BraveHTML'  { return 'brave' }
         'OperaStable' { return 'opera' }
-        default { return 'none' }
+        default { return '' }
     }
 }
 

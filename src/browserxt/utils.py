@@ -36,7 +36,7 @@ POSIX_BROWSER_PATHS = {
 }
 
 
-def get_posix_default_browser():
+def get_posix_default_browser() -> str | None:
     # Method 1: Check BROWSER and DEFAULT_BROWSER environment variables
     browser = os.getenv("BROWSER") or os.getenv("DEFAULT_BROWSER")
     if browser:
@@ -196,7 +196,9 @@ def get_posix_default_browser():
     return None
 
 
-def get_binary_path_from_desktop_entry(browser):
+def get_binary_path_from_desktop_entry(browser: str | None) -> str | None:
+    if not browser:
+        return None
     # If the browser is not a .desktop file, return it as is
     if not browser.endswith(".desktop"):
         return browser
@@ -234,16 +236,18 @@ def get_binary_path_from_desktop_entry(browser):
     return None
 
 
-def get_posix_browser_name(path):
+def get_posix_browser_name(path: str | None) -> str:
+    if not path:
+        return ""
     for browser_type, binaries in POSIX_BROWSER_PATHS.items():
         for binary in binaries:
             if binary in path:
                 return browser_type
-    return None
+    return ""
 
 
 # Function to check if a browser is installed and map its name
-def detect_posix():
+def detect_posix() -> tuple[str, dict[str, str]]:
     installed_browsers = {}
     for name, binaries in POSIX_BROWSER_PATHS.items():
         for binary in binaries:
@@ -255,10 +259,10 @@ def detect_posix():
     default_browser = get_posix_browser_name(
         get_binary_path_from_desktop_entry(get_posix_default_browser())
     )
-    return {"default": default_browser, "browsers": installed_browsers}
+    return default_browser, installed_browsers
 
 
-def detect_nt():
+def detect_nt() -> tuple[str, dict[str, str]]:
     # Path to the PowerShell script
     powershell_script_path = os.path.join(
         os.path.dirname(__file__), "scripts/detect_browsers.ps1"
@@ -280,16 +284,13 @@ def detect_nt():
         )
         # Load the JSON output into a Python dictionary
         json_output = json.loads(result.stdout)
-        return json_output
+        return json_output.get("default", ""), json_output.get("browsers", {})
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running the PowerShell script: {e}")
-        return None
     except json.JSONDecodeError as e:
         print(f"Failed to decode JSON output: {e}")
-        return None
 
-
-print(json.dumps(detect_posix(), indent=4))
+    return "", {}
 
 
 def get_windows_username() -> str | None:

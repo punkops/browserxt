@@ -12,13 +12,13 @@ app = Typer()
     context_settings={"allow_extra_args": True, "ignore_unknown_options": True},
 )
 def main(
-    browser: list[str] = Option(
+    browser_list: list[str] = Option(
         None,
         "--browser",
         "-b",
         help="Specify the browser(s) to try use in preference order",
     ),
-    wsl: bool = Option(
+    use_wsl: bool = Option(
         False,
         "--wsl",
         help="Force use of WSL browsers (X11 required)",
@@ -31,8 +31,9 @@ def main(
     ),
 ) -> None:
     """Open a browser with specified positional arguments as options."""
-    _browser = Browser(browser or [], options or [], wsl)
-    _browser.open(url)
+    _browser = Browser(browser_list or [], options or [], use_wsl)
+    if not _browser.open(url):
+        raise Exception("No browser detected")
 
 
 typer_click_object = typer_main.get_command(app)

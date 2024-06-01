@@ -383,14 +383,6 @@ def get_list_of_detected_browsers() -> (
     return fix_tryoder(list(set(all))), browsers_list
 
 
-def get_windows_username() -> str | None:
-    return (
-        os.popen("powershell.exe '$env:UserName'").read().strip()
-        if is_running_in_wsl() and os.name != "nt"
-        else None
-    )
-
-
 def is_running_in_wsl() -> bool:
     if (os.environ.get("SKIP_WSL_CHECK") != None) | (sys.platform != "linux"):
         return False
@@ -409,6 +401,25 @@ def is_running_in_wsl() -> bool:
         return True
 
     return False
+
+
+def get_windows_username() -> str | None:
+    return (
+        subprocess.run(
+            [
+                "powershell.exe",
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "echo $env:UserName",
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        if is_running_in_wsl() and os.name != "nt"
+        else None
+    )
 
 
 def nt_to_wsl_path(nt_path: str) -> str:

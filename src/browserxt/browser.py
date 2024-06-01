@@ -9,18 +9,38 @@ from browserxt.utils import (
     fix_tryoder,
 )
 
+from browserxt.profiles import (
+    get_chromium_profile_options,
+    get_firefox_profile_options,
+)
+
 
 class ExtensibleBrowser:
     def __init__(
-        self, name: str, path: str, options: list[str] = [], family: str = "unknown"
+        self,
+        name: str,
+        path: str,
+        options: list[str] = [],
+        family: str = "unknown",
+        profile: str = "",
+        user_data_path: str = "",
     ) -> None:
         self.name = name
         self.family = family
         self.path = path
         self.set_options(options)
+        if profile != "":
+            self.set_profile_options(profile, user_data_path)
 
     def set_options(self, options: list[str]) -> None:
         self.options = options
+
+    # Dummy method to be overridden by subclasses
+    def set_profile_options(self, name: str, user_data_path: str = "") -> None:
+        pass
+
+    def is_running_in_wsl(self) -> bool:
+        return is_running_in_wsl() and not self.path.startswith("/mnt")
 
     def open(self, url: str) -> bool:
         cmdline = [self.path] + self.options + [url]
@@ -42,8 +62,20 @@ class ExtensibleBrowser:
 
 
 class ChromiumBrowser(ExtensibleBrowser):
-    def __init__(self, name: str, path: str, options: list[str] = []) -> None:
-        super().__init__(name, path, options, "chromium")
+    def __init__(
+        self,
+        name: str,
+        path: str,
+        options: list[str] = [],
+        profile: str = "",
+        user_data_path: str = "",
+    ) -> None:
+        super().__init__(name, path, options, "chromium", profile, user_data_path)
+
+    def set_profile_options(self, name: str, user_data_path: str = "") -> None:
+        self.options += get_chromium_profile_options(
+            name, user_data_path, self.is_running_in_wsl()
+        )
 
     def set_options(self, options: list[str]) -> None:
         super().set_options(options)
@@ -52,8 +84,20 @@ class ChromiumBrowser(ExtensibleBrowser):
 
 
 class FirefoxBrowser(ExtensibleBrowser):
-    def __init__(self, name: str, path: str, options: list[str] = []) -> None:
-        super().__init__(name, path, options, "firefox")
+    def __init__(
+        self,
+        name: str,
+        path: str,
+        options: list[str] = [],
+        profile: str = "",
+        user_data_path: str = "",
+    ) -> None:
+        super().__init__(name, path, options, "firefox", profile, user_data_path)
+
+    def set_profile_options(self, name: str, user_data_path: str = "") -> None:
+        self.options += get_firefox_profile_options(
+            name, user_data_path, self.is_running_in_wsl()
+        )
 
 
 class UnknownBrowser(ExtensibleBrowser):
@@ -78,6 +122,8 @@ class Browser:
         options: list[str] = [],
         wsl: bool = False,
         ignore_default: bool = False,
+        profile: str = "",
+        user_data_path: str = "",
     ) -> None:
         self.options = options.copy()
         self._platform = os.name
@@ -86,6 +132,8 @@ class Browser:
         self._prefered = prefered.copy()
         self._tryorder: list[str] = []
         self._browsers: dict[str, ExtensibleBrowser] = {}
+        self._profile = profile
+        self._user_data_path = user_data_path
         self.detect_browsers()
         self._tryorder = fix_tryoder(self._tryorder)
 
@@ -97,7 +145,12 @@ class Browser:
                 family = browser.get("family", "")
                 if is_running_in_wsl():
                     path = nt_to_wsl_path(path)
-                self.register(name, get_browser_class(family)(name, path, self.options))
+                self.register(
+                    name,
+                    get_browser_class(family)(
+                        name, path, self.options, self._profile, self._user_data_path
+                    ),
+                )
             default_instance = self._browsers.get(default, None)
             if default_instance and not self._ignore_default:
                 self.register("default", default_instance)
@@ -106,7 +159,12 @@ class Browser:
             for name, browser in browsers.items():
                 path = browser.get("path", "")
                 family = browser.get("family", "")
-                self.register(name, get_browser_class(family)(name, path, self.options))
+                self.register(
+                    name,
+                    get_browser_class(family)(
+                        name, path, self.options, self._profile, self._user_data_path
+                    ),
+                )
             default_instance = self._browsers.get(default, None)
             if default_instance and not self._ignore_default:
                 self.register("default", default_instance)

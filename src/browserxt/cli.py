@@ -28,6 +28,17 @@ def main(
     ignore_default: bool = Option(
         False, "--ignore-default", help="Ignore the default browser"
     ),
+    profile: str = Option(
+        "",
+        "-p",
+        "--profile",
+        help="Use a specific browser profile with this name, a new profile with this name will be created if it does not exist",
+    ),
+    profile_path: str = Option(
+        "",
+        "--profile-path",
+        help="Use an existing browser profile path, if unset, a new profile will be created",
+    ),
     url: str = Argument(..., help="URL to open in the browser"),
     options: list[str] = Argument(
         default=None,

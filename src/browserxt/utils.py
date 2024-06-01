@@ -6,33 +6,54 @@ import platform
 import subprocess
 import configparser
 
-
-POSIX_BROWSER_PATHS = {
-    "chrome": [
-        "google-chrome",
-        "google-chrome-stable",
-        "chrome",
-        "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    ],
-    "firefox": ["firefox", "/Applications/Firefox.app/Contents/MacOS/firefox"],
-    "chromium": [
-        "chromium",
-        "chromium-browser",
-        "/Applications/Chromium.app/Contents/MacOS/Chromium",
-    ],
-    "opera": ["opera", "/Applications/Opera.app/Contents/MacOS/Opera"],
-    "brave": [
-        "brave",
-        "brave-browser",
-        "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
-    ],
-    "edge": [
-        "microsoft-edge",
-        "microsoft-edge-stable",
-        "edge",
-        "msedge",
-        "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
-    ],
+POSIX_BROWSERS = {
+    "chrome": {
+        "paths": [
+            "google-chrome",
+            "google-chrome-stable",
+            "chrome",
+            "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+        ],
+        "family": "chromium",
+    },
+    "firefox": {
+        "paths": [
+            "firefox",
+            "firefox-bin",
+            "/Applications/Firefox.app/Contents/MacOS/firefox",
+        ],
+        "family": "firefox",
+    },
+    "chromium": {
+        "paths": [
+            "chromium",
+            "chromium-browser",
+            "/Applications/Chromium.app/Contents/MacOS/Chromium",
+        ],
+        "family": "chromium",
+    },
+    "opera": {
+        "paths": ["opera", "/Applications/Opera.app/Contents/MacOS/Opera"],
+        "family": "chromium",
+    },
+    "brave": {
+        "paths": [
+            "brave",
+            "brave-browser",
+            "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+        ],
+        "family": "chromium",
+    },
+    "edge": {
+        "paths": [
+            "microsoft-edge",
+            "microsoft-edge-stable",
+            "edge",
+            "msedge",
+            "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+        ],
+        "family": "chromium",
+    },
 }
 
 
@@ -234,10 +255,10 @@ def get_binary_path_from_desktop_entry(browser: str | None) -> str | None:
 def get_posix_browser_name(path: str | None) -> str:
     if not path:
         return ""
-    for browser_type, binaries in POSIX_BROWSER_PATHS.items():
-        for binary in binaries:
+    for name, browser in POSIX_BROWSERS.items():
+        for binary in browser.get("paths", []):
             if binary in path:
-                return browser_type
+                return name
     return ""
 
 
@@ -249,13 +270,15 @@ def get_default_from_env_vars() -> str:
 
 
 # Function to check if a browser is installed and map its name
-def detect_posix() -> tuple[str, dict[str, str]]:
-    installed_browsers = {}
-    for name, binaries in POSIX_BROWSER_PATHS.items():
-        for binary in binaries:
+def detect_posix() -> tuple[str, dict[str, dict[str, str]]]:
+    installed_browsers: dict[str, dict[str, str]] = {}
+    for name, browser in POSIX_BROWSERS.items():
+        for binary in browser.get("paths", []):
             path = shutil.which(binary)
             if path:
-                installed_browsers[name] = path
+                installed_browsers[name] = {}
+                installed_browsers[name]["path"] = path
+                installed_browsers[name]["family"] = str(browser.get("family", ""))
                 break  # Stop at the first detected binary for a browser
 
     default_browser = get_default_from_env_vars()
@@ -268,7 +291,7 @@ def detect_posix() -> tuple[str, dict[str, str]]:
     return default_browser, installed_browsers
 
 
-def detect_nt() -> tuple[str, dict[str, str]]:
+def detect_nt() -> tuple[str, dict[str, dict[str, str]]]:
     # Path to the PowerShell script
     powershell_script_path = os.path.join(
         os.path.dirname(__file__), "scripts/detect_browsers.ps1"

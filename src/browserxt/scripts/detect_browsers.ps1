@@ -48,9 +48,9 @@ $bravePossiblePaths = @(
 )
 
 $operaPossiblePaths = @(
-    "$env:ProgramFiles\Opera\launcher.exe",
-    "$env:ProgramFiles (x86)\Opera\launcher.exe",
-    "$env:LocalAppData\Programs\Opera\launcher.exe"
+    "$env:ProgramFiles\Opera\opera.exe",
+    "$env:ProgramFiles (x86)\Opera\opera.exe",
+    "$env:LocalAppData\Programs\Opera\opera.exe"
 )
 
 function Find-BrowserPath {
@@ -107,31 +107,41 @@ $defaultBrowser = Get-DefaultBrowser
 # Find Chrome paths
 $chromePaths = Find-BrowserPath -registryPaths $chromeRegistryPaths -possiblePaths $chromePossiblePaths
 if ($chromePaths.Count -gt 0) {
-    $browsers["chrome"] = $chromePaths
+    $browsers["chrome"] = @{}
+    $browsers["chrome"]["path"] = $chromePaths
+    $browsers["chrome"]["family"] = "chromium"
 }
 
 # Find Firefox paths
 $firefoxPaths = Find-BrowserPath -registryPaths $firefoxRegistryPaths -possiblePaths $firefoxPossiblePaths
 if ($firefoxPaths.Count -gt 0) {
-    $browsers["firefox"] = $firefoxPaths
+    $browsers["firefox"] = @{}
+    $browsers["firefox"]["path"] = $firefoxPaths
+    $browsers["firefox"]["family"] = "firefox"
 }
 
 # Find Edge paths
 $edgePaths = Find-BrowserPath -registryPaths $edgeRegistryPaths -possiblePaths $edgePossiblePaths
 if ($edgePaths.Count -gt 0) {
-    $browsers["edge"] = $edgePaths
+    $browsers["edge"] = @{}
+    $browsers["edge"]["path"] = $edgePaths
+    $browsers["edge"]["family"] = "chromium"
 }
 
 # Find Brave paths
 $bravePaths = Find-BrowserPath -registryPaths $braveRegistryPaths -possiblePaths $bravePossiblePaths
 if ($bravePaths.Count -gt 0) {
-    $browsers["brave"] = $bravePaths
+    $browsers["brave"] = @{}
+    $browsers["brave"]["path"] = $bravePaths
+    $browsers["brave"]["family"] = "chromium"
 }
 
 # Find Opera paths
 $operaPaths = Find-BrowserPath -registryPaths $operaRegistryPaths -possiblePaths $operaPossiblePaths
 if ($operaPaths.Count -gt 0) {
-    $browsers["opera"] = $operaPaths
+    $browsers["opera"] = @{}
+    $browsers["opera"]["path"] = $operaPaths
+    $browsers["opera"]["family"] = "chromium"
 }
 
 # Add default browser to the output

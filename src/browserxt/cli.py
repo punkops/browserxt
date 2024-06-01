@@ -24,6 +24,9 @@ def main(
         help="Force use of WSL browsers (X11 required)",
         hidden=not is_running_in_wsl(),
     ),
+    ignore_default: bool = Option(
+        False, "--ignore-default", help="Ignore the default browser"
+    ),
     url: str = Argument(..., help="URL to open in the browser"),
     options: list[str] = Argument(
         default=None,
@@ -31,7 +34,7 @@ def main(
     ),
 ) -> None:
     """Open a browser with specified positional arguments as options."""
-    _browser = Browser(browser_list or [], options or [], use_wsl)
+    _browser = Browser(browser_list or [], options or [], use_wsl, ignore_default)
     if not _browser.open(url):
         raise Exception("No browser detected")
 

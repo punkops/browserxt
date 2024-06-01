@@ -46,7 +46,14 @@ def main(
     ),
 ) -> None:
     """Open a browser with specified positional arguments as options."""
-    _browser = Browser(browser_list or [], options or [], use_wsl, ignore_default)
+    _browser = Browser(
+        browser_list or [],
+        options or [],
+        use_wsl,
+        ignore_default,
+        profile,
+        profile_path,
+    )
     if not _browser.open(url):
         raise Exception("No browser detected")
 

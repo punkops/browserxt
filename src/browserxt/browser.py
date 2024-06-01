@@ -28,7 +28,7 @@ class ExtensibleBrowser:
         self.name = name
         self.family = family
         self.path = path
-        self.set_options(options)
+        self.set_options(options.copy())
         if profile != "":
             self.set_profile_options(profile, user_data_path)
 

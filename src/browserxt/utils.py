@@ -37,12 +37,7 @@ POSIX_BROWSER_PATHS = {
 
 
 def get_posix_default_browser() -> str | None:
-    # Method 1: Check BROWSER and DEFAULT_BROWSER environment variables
-    browser = os.getenv("BROWSER") or os.getenv("DEFAULT_BROWSER")
-    if browser:
-        return browser
-
-    # Method 2: Check xdg-settings (Linux)
+    # Check xdg-settings (Linux)
     try:
         result = subprocess.run(
             ["xdg-settings", "get", "default-web-browser"],
@@ -54,7 +49,7 @@ def get_posix_default_browser() -> str | None:
     except FileNotFoundError:
         pass
 
-    # Method 3: Check macOS defaults
+    # Check macOS defaults
     try:
         result = subprocess.run(
             [
@@ -73,7 +68,7 @@ def get_posix_default_browser() -> str | None:
     except FileNotFoundError:
         pass
 
-    # Method 4: Check GNOME settings
+    # Check GNOME settings
     try:
         result = subprocess.run(
             [
@@ -90,7 +85,7 @@ def get_posix_default_browser() -> str | None:
     except FileNotFoundError:
         pass
 
-    # Method 5: Check KDE settings
+    # Check KDE settings
     try:
         result = subprocess.run(
             ["xdg-mime", "query", "default", "x-scheme-handler/http"],
@@ -102,7 +97,7 @@ def get_posix_default_browser() -> str | None:
     except FileNotFoundError:
         pass
 
-    # Method 6: Check XFCE settings
+    # Check XFCE settings
     try:
         result = subprocess.run(
             [
@@ -120,7 +115,7 @@ def get_posix_default_browser() -> str | None:
     except FileNotFoundError:
         pass
 
-    # Method 7: Check LXDE settings
+    # Check LXDE settings
     try:
         lxde_config = os.path.expanduser("~/.config/lxsession/LXDE/autostart")
         if os.path.exists(lxde_config):
@@ -131,7 +126,7 @@ def get_posix_default_browser() -> str | None:
     except Exception as e:
         pass
 
-    # Method 8: Check Cinnamon settings
+    # Check Cinnamon settings
     try:
         result = subprocess.run(
             [
@@ -148,7 +143,7 @@ def get_posix_default_browser() -> str | None:
     except FileNotFoundError:
         pass
 
-    # Method 9: Check MATE settings
+    # Check MATE settings
     try:
         result = subprocess.run(
             ["gsettings", "get", "org.mate.applications-browser", "exec"],
@@ -246,6 +241,13 @@ def get_posix_browser_name(path: str | None) -> str:
     return ""
 
 
+def get_default_from_env_vars() -> str:
+    browser = os.getenv("BROWSER") or os.getenv("DEFAULT_BROWSER")
+    if browser:
+        return browser
+    return ""
+
+
 # Function to check if a browser is installed and map its name
 def detect_posix() -> tuple[str, dict[str, str]]:
     installed_browsers = {}
@@ -255,6 +257,10 @@ def detect_posix() -> tuple[str, dict[str, str]]:
             if path:
                 installed_browsers[name] = path
                 break  # Stop at the first detected binary for a browser
+
+    default_browser = get_default_from_env_vars()
+    if default_browser in installed_browsers:
+        return default_browser, installed_browsers
 
     default_browser = get_posix_browser_name(
         get_binary_path_from_desktop_entry(get_posix_default_browser())
@@ -284,6 +290,11 @@ def detect_nt() -> tuple[str, dict[str, str]]:
         )
         # Load the JSON output into a Python dictionary
         json_output = json.loads(result.stdout)
+
+        default_browser = get_default_from_env_vars()
+        if default_browser in json_output.get("browsers", {}):
+            return default_browser, json_output.get("browsers", {})
+
         return json_output.get("default", ""), json_output.get("browsers", {})
     except subprocess.CalledProcessError as e:
         print(f"An error occurred while running the PowerShell script: {e}")

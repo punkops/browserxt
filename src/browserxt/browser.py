@@ -3,7 +3,19 @@ import subprocess
 
 from browserxt.utils import is_running_in_wsl, nt_to_wsl_path, detect_nt, detect_posix
 
-DEFAULT_SORTING = ["default", "chromium", "brave", "firefox", "chrome", "opera", "edge"]
+# Default order for browsers to check, chosen according to popularity (kind of)
+DEFAULT_SORTING = [
+    "default",
+    "chrome",
+    "chromium",
+    "firefox",
+    "brave",
+    "opera",
+    "vivaldi",
+    "edge",
+    "safari",
+    "unknown",
+]
 
 
 class ExtensibleBrowser:

@@ -54,6 +54,14 @@ POSIX_BROWSERS = {
         ],
         "family": "chromium",
     },
+    "safari": {
+        "paths": ["safari", "/Applications/Safari.app/Contents/MacOS/Safari"],
+        "family": "safari",
+    },
+    "vivaldi": {
+        "paths": ["vivaldi", "/Applications/Vivaldi.app/Contents/MacOS/Vivaldi"],
+        "family": "chromium",
+    },
 }
 
 

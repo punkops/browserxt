@@ -23,6 +23,11 @@ $operaRegistryPaths = @(
     'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\opera.exe'
 )
 
+$vivaldiRegistryPaths = @(
+    'HKLM:\Software\Microsoft\Windows\CurrentVersion\App Paths\vivaldi.exe',
+    'HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\App Paths\vivaldi.exe'
+)
+
 $chromePossiblePaths = @(
     "$env:ProgramFiles\Google\Chrome\Application\chrome.exe",
     "$env:ProgramFiles (x86)\Google\Chrome\Application\chrome.exe",
@@ -51,6 +56,12 @@ $operaPossiblePaths = @(
     "$env:ProgramFiles\Opera\opera.exe",
     "$env:ProgramFiles (x86)\Opera\opera.exe",
     "$env:LocalAppData\Programs\Opera\opera.exe"
+)
+
+$vivaldiPossiblePaths = @(
+    "$env:ProgramFiles\Vivaldi\Application\vivaldi.exe",
+    "$env:ProgramFiles (x86)\Vivaldi\Application\vivaldi.exe",
+    "$env:LocalAppData\Vivaldi\Application\vivaldi.exe"
 )
 
 function Find-BrowserPath {
@@ -97,6 +108,7 @@ function Get-DefaultBrowser {
         'MSEdgeHTM'  { return 'edge' }
         'BraveHTML'  { return 'brave' }
         'OperaStable' { return 'opera' }
+        'VivaldiHTM' { return 'vivaldi' }
         default { return '' }
     }
 }
@@ -142,6 +154,14 @@ if ($operaPaths.Count -gt 0) {
     $browsers["opera"] = @{}
     $browsers["opera"]["path"] = $operaPaths
     $browsers["opera"]["family"] = "chromium"
+}
+
+# Find Vivaldi paths
+$vivaldiPaths = Find-BrowserPath -registryPaths $vivaldiRegistryPaths -possiblePaths $vivaldiPossiblePaths
+if ($vivaldiPaths.Count -gt 0) {
+    $browsers["vivaldi"] = @{}
+    $browsers["vivaldi"]["path"] = $vivaldiPaths
+    $browsers["vivaldi"]["family"] = "chromium"
 }
 
 # Add default browser to the output

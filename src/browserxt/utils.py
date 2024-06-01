@@ -6,6 +6,7 @@ import platform
 import subprocess
 import configparser
 
+# Browsers and their possible binary paths on POSIX systems
 POSIX_BROWSERS = {
     "chrome": {
         "paths": [
@@ -63,6 +64,29 @@ POSIX_BROWSERS = {
         "family": "chromium",
     },
 }
+
+# Default order for browsers to check, chosen according to popularity (kind of)
+DEFAULT_SORTING = [
+    "default",
+    "chrome",
+    "chromium",
+    "firefox",
+    "brave",
+    "opera",
+    "vivaldi",
+    "edge",
+    "safari",
+    "unknown",
+]
+
+
+def fix_tryoder(tryorder: list[str]) -> list[str]:
+    return sorted(
+        tryorder.copy(),
+        key=lambda x: (
+            DEFAULT_SORTING.index(x) if x in DEFAULT_SORTING else len(DEFAULT_SORTING)
+        ),
+    )
 
 
 def get_posix_default_browser() -> str | None:
@@ -333,6 +357,30 @@ def detect_nt() -> tuple[str, dict[str, dict[str, str]]]:
         print(f"Failed to decode JSON output: {e}")
 
     return "", {}
+
+
+def get_list_of_detected_browsers() -> (
+    tuple[list[str], dict[str, dict[str, str | list[str]]]]
+):
+    browsers_list: dict[str, dict[str, str | list[str]]] = {}
+    all = []
+    if os.name == "nt" or is_running_in_wsl():
+        default, browsers = detect_nt()
+        browsers_list["nt"] = {
+            "default": default,
+            "browsers": fix_tryoder(list(browsers.keys())),
+        }
+        all += list(browsers.keys())
+
+    if os.name == "posix":
+        default, browsers = detect_posix()
+        browsers_list["posix"] = {
+            "default": default,
+            "browsers": fix_tryoder(list(browsers.keys())),
+        }
+        all += list(browsers.keys())
+
+    return fix_tryoder(list(set(all))), browsers_list
 
 
 def get_windows_username() -> str | None:

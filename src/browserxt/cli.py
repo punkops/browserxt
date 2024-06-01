@@ -2,7 +2,7 @@ from typer import Argument, Option, Typer
 from typer import main as typer_main
 
 from browserxt.browser import Browser
-from browserxt.utils import is_running_in_wsl
+from browserxt.utils import is_running_in_wsl, get_list_of_detected_browsers
 
 app = Typer()
 
@@ -16,6 +16,7 @@ def main(
         None,
         "--browser",
         "-b",
+        show_choices=True,
         help="Specify the browser(s) to try use in preference order",
     ),
     use_wsl: bool = Option(

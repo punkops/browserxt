@@ -1,21 +1,13 @@
 import os
 import subprocess
 
-from browserxt.utils import is_running_in_wsl, nt_to_wsl_path, detect_nt, detect_posix
-
-# Default order for browsers to check, chosen according to popularity (kind of)
-DEFAULT_SORTING = [
-    "default",
-    "chrome",
-    "chromium",
-    "firefox",
-    "brave",
-    "opera",
-    "vivaldi",
-    "edge",
-    "safari",
-    "unknown",
-]
+from browserxt.utils import (
+    is_running_in_wsl,
+    nt_to_wsl_path,
+    detect_nt,
+    detect_posix,
+    fix_tryoder,
+)
 
 
 class ExtensibleBrowser:
@@ -95,7 +87,7 @@ class Browser:
         self._tryorder: list[str] = []
         self._browsers: dict[str, ExtensibleBrowser] = {}
         self.detect_browsers()
-        self._fix_tryoder()
+        self._tryorder = fix_tryoder(self._tryorder)
 
     def detect_browsers(self) -> None:
         if self._platform == "nt" or (is_running_in_wsl() and not self._wsl):
@@ -142,13 +134,3 @@ class Browser:
             self._tryorder.insert(0, name)
         else:
             self._tryorder.append(name)
-
-    def _fix_tryoder(self) -> None:
-        self._tryorder = sorted(
-            self._tryorder,
-            key=lambda x: (
-                DEFAULT_SORTING.index(x)
-                if x in DEFAULT_SORTING
-                else len(DEFAULT_SORTING)
-            ),
-        )

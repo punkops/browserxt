@@ -1,13 +1,11 @@
 import os
-import sys
 import platform
 import subprocess
+import sys
 
 
 class _globals:
-    """
-    A class that represents global variables and properties used in the application.
-    """
+    """A class that represents global variables and properties used in the application."""
 
     IS_POSIX = os.name == "posix"
     IS_REAL_NT = os.name == "nt"
@@ -59,9 +57,7 @@ class _globals:
         return (
             os.path.expanduser("~\\AppData\\Local")
             if self.IS_REAL_NT
-            else self._LOCAL_DATA
-            if self.IS_NT
-            else self.HOME
+            else self._LOCAL_DATA if self.IS_NT else self.HOME
         )
 
 

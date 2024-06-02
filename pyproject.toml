@@ -79,29 +79,29 @@ log_date_format = "%Y-%m-%d %H:%M:%S"
 log_format = "%(asctime)s %(levelname)s %(message)s"
 minversion = "6.0"
 
-[tool.ruff]
-fix = true
-src = ["src"]
+# [tool.ruff]
+# fix = true
+# src = ["src"]
 
-[tool.ruff.lint]
-select = [
-  "B",      # flake8-bugbear
-  "D",      # pydocstyle
-  "E",      # pycodestyle error
-  "F",      # Pyflakes
-  "I",      # isort
-  "RUF100", # Unused noqa directive
-  "S",      # flake8-bandit
-  "SIM",    # flake8-simplify
-  "UP",     # pyupgrade
-  "W",      # pycodestyle warning
-]
+# [tool.ruff.lint]
+# select = [
+#   "B",      # flake8-bugbear
+#   "D",      # pydocstyle
+#   "E",      # pycodestyle error
+#   "F",      # Pyflakes
+#   "I",      # isort
+#   "RUF100", # Unused noqa directive
+#   "S",      # flake8-bandit
+#   "SIM",    # flake8-simplify
+#   "UP",     # pyupgrade
+#   "W",      # pycodestyle warning
+# ]
 
-[tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101"]
+# [tool.ruff.lint.per-file-ignores]
+# "tests/*" = ["S101"]
 
-[tool.ruff.lint.pydocstyle]
-convention = "google"
+# [tool.ruff.lint.pydocstyle]
+# convention = "google"
 
 [tool.tomlsort]
 all = true

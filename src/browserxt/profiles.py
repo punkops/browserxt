@@ -5,8 +5,22 @@ from browserxt.utils import is_running_in_wsl, nt_to_wsl_path
 
 
 DEFAULT_USER_DATA_DIR = {
-    "posix": "$HOME/.cache/browserxt",
-    "nt": "LOCALAPPDATA\\browserxt",
+    "posix": os.path.expandvars("$HOME/.cache/browserxt"),
+    "nt": (
+        subprocess.run(
+            [
+                "cmd.exe",
+                "/c",
+                "echo",
+                "%LOCALAPPDATA%\\browserxt",
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+        if os.name == "nt" or is_running_in_wsl()
+        else ""
+    ),
 }
 
 
@@ -23,18 +37,6 @@ def get_profiles_path(
     if os.name == "nt" or (is_running_in_wsl() and not use_wsl):
         if path == "":
             path = f"{DEFAULT_USER_DATA_DIR['nt']}\\{type}"
-        path = subprocess.run(
-            [
-                "powershell.exe",
-                "-NoProfile",
-                "-ExecutionPolicy",
-                "Bypass",
-                f"echo $env:{path}",
-            ],
-            capture_output=True,
-            text=True,
-            check=True,
-        ).stdout.strip()
         full_path = f"{path}\\{name}"
         if is_running_in_wsl() and not use_wsl and create:
             os.makedirs(nt_to_wsl_path(full_path), exist_ok=True)
@@ -42,7 +44,7 @@ def get_profiles_path(
     else:
         if path == "":
             path = f"{DEFAULT_USER_DATA_DIR['posix']}/{type}"
-            path = os.path.expandvars(path)
+            path = path
         full_path = f"{path}/{name}"
 
     if create:

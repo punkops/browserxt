@@ -72,7 +72,7 @@ toml-sort:
 	pdm run toml-sort --check pyproject.toml
 
 # Check lint with all linters.
-lint: mypy ruff-format
+lint: mypy
 
 # Run pre-commit with autofix against all files.
 pre-commit:

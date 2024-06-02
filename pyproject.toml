@@ -3,14 +3,7 @@ build-backend = "pdm.backend"
 requires = ["pdm-backend==2.3.0"]
 
 [project]
-authors = [{ email = "nsyntych@punkops.dev", name = "Nick Syntychakis" }]
-classifiers = [
-  "Development Status :: 3 - Alpha",
-  "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
-  "Operating System :: OS Independent",
-  "Programming Language :: Python :: 3.11",
-]
-dependencies = ["pydantic-settings", "typer[all]", "wslPath"]
+dependencies = ["pydantic-settings", "typer[all]"]
 description = "A simple extensible browser runner"
 dynamic = ["version"]
 keywords = [
@@ -18,6 +11,7 @@ keywords = [
   "full-development-lifecycle",
   "project-template",
   "serious-scaffold",
+  "winreg; sys_platform == 'win32'",
 ]
 license = { text = "MPL-2.0" }
 name = "browserxt"
@@ -104,6 +98,13 @@ minversion = "6.0"
 # convention = "google"
 
 [tool.tomlsort]
+authors = [{ email = "nsyntych@punkops.dev", name = "Nick Syntychakis" }]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3.11",
+]
 all = true
 in_place = true
 trailing_comma_inline_array = true

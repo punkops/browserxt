@@ -1,8 +1,11 @@
+import sys
 from typer import Argument, Option, Typer
 from typer import main as typer_main
 
 from browserxt.browser import Browser
-from browserxt.utils import is_running_in_wsl, get_list_of_detected_browsers
+from browserxt.utils import detect_standard_browsers
+
+from browserxt.globals import GLOBALS
 
 app = Typer()
 
@@ -23,7 +26,10 @@ def main(
         False,
         "--wsl",
         help="Force use of WSL browsers (X11 required)",
-        hidden=not is_running_in_wsl(),
+        hidden=not GLOBALS.IS_WSL,
+    ),
+    _debug: bool = Option(
+        False, "--debug", help="Print debug information", hidden=True
     ),
     ignore_default: bool = Option(
         False, "--ignore-default", help="Ignore the default browser"
@@ -46,16 +52,36 @@ def main(
     ),
 ) -> None:
     """Open a browser with specified positional arguments as options."""
-    _browser = Browser(
-        browser_list or [],
-        options or [],
-        use_wsl,
-        ignore_default,
-        profile,
-        profile_path,
-    )
-    if not _browser.open(url):
-        raise Exception("No browser detected")
+    GLOBALS.IGNORE_WINDOWS = use_wsl
+    if _debug:
+        default, browsers = detect_standard_browsers()
+        if GLOBALS.IS_NT:
+            print(
+                f"------------- Windows{('(WSL)' if GLOBALS.IS_WSL else '')} --------------"
+            )
+            print("Current User:", GLOBALS.USER)
+            print("Home:", GLOBALS.HOME)
+            print("Local Data:", GLOBALS.LOCAL_DATA)
+            print("Program Files:", GLOBALS.PROGRAM_FILES)
+            print("Windows Drive:", GLOBALS.WINDOWS_DRIVE)
+            print("Default Browser:", default)
+            print("Browsers:", list(browsers.keys()))
+        else:
+            print(f"------------- Posix({sys.platform}) --------------")
+            print("Current User:", GLOBALS.USER)
+            print("Home:", GLOBALS.HOME)
+            print("Default Browser:", default)
+            print("Browsers:", list(browsers.keys()))
+    else:
+        _browser = Browser(
+            browser_list or [],
+            options or [],
+            ignore_default,
+            profile,
+            profile_path,
+        )
+        if not _browser.open(url):
+            raise Exception("No browser detected")
 
 
 typer_click_object = typer_main.get_command(app)

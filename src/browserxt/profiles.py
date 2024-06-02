@@ -1,27 +1,7 @@
 import os
-import subprocess
 
-from browserxt.utils import is_running_in_wsl, nt_to_wsl_path
-
-
-DEFAULT_USER_DATA_DIR = {
-    "posix": os.path.expandvars("$HOME/.cache/browserxt"),
-    "nt": (
-        subprocess.run(
-            [
-                "cmd.exe",
-                "/c",
-                "echo",
-                "%LOCALAPPDATA%\\browserxt",
-            ],
-            capture_output=True,
-            text=True,
-            check=True,
-        ).stdout.strip()
-        if os.name == "nt" or is_running_in_wsl()
-        else ""
-    ),
-}
+from browserxt.utils import nt_to_wsl_path
+from browserxt.globals import GLOBALS
 
 
 def get_profiles_path(
@@ -29,20 +9,19 @@ def get_profiles_path(
     type: str,
     user_data_path: str = "",
     create: bool = True,
-    use_wsl: bool = False,
 ) -> tuple[str, str]:
     path = user_data_path
     full_path = path
-    if os.name == "nt" or (is_running_in_wsl() and not use_wsl):
+    if GLOBALS.IS_NT:
         if path == "":
-            path = f"{DEFAULT_USER_DATA_DIR['nt']}\\{type}"
+            path = f"{GLOBALS.LOCAL_DATA}\\browserxt\\{type}"
         full_path = f"{path}\\{name}"
-        if is_running_in_wsl() and not use_wsl and create:
+        if GLOBALS.IS_WSL and create:
             os.makedirs(nt_to_wsl_path(full_path), exist_ok=True)
             return full_path, path
     else:
         if path == "":
-            path = f"{DEFAULT_USER_DATA_DIR['posix']}/{type}"
+            path = f"{GLOBALS.HOME}/.cache/browserxt/{type}"
             path = path
         full_path = f"{path}/{name}"
 
@@ -55,11 +34,8 @@ def get_profiles_path(
 def get_chromium_profile_options(
     name: str,
     user_data_path: str = "",
-    use_wsl: bool = False,
 ) -> list[str]:
-    _, path = get_profiles_path(
-        name, "chromium", user_data_path, create=True, use_wsl=use_wsl
-    )
+    _, path = get_profiles_path(name, "chromium", user_data_path, create=True)
 
     options = [
         f"--user-data-dir={path}",
@@ -91,11 +67,8 @@ def get_chromium_profile_options(
 def get_firefox_profile_options(
     name: str,
     user_data_path: str = "",
-    use_wsl: bool = False,
 ) -> list[str]:
-    full_path, _ = get_profiles_path(
-        name, "firefox", user_data_path, create=True, use_wsl=use_wsl
-    )
+    full_path, _ = get_profiles_path(name, "firefox", user_data_path, create=True)
 
     options = [
         "--profile",

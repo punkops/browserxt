@@ -5,7 +5,7 @@
 groups = ["default", "doc", "lint", "test"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:974b355d744f9978632143d9e60ecd193c058cef87c689f0416295b35d6fec74"
+content_hash = "sha256:1180ec3cadf0acd303d0eec392f9dd4fab79166798894a652ea45ce7ee1fecdb"
 
 [[package]]
 name = "alabaster"
@@ -1089,15 +1089,4 @@ files = [
     {file = "websockets-12.0-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:2cb388a5bfb56df4d9a406783b7f9dbefb888c09b71629351cc6b036e9259370"},
     {file = "websockets-12.0-py3-none-any.whl", hash = "sha256:dc284bbc8d7c78a6c69e0c7325ab46ee5e40bb4d50e494d8131a07ef47500e9e"},
     {file = "websockets-12.0.tar.gz", hash = "sha256:81df9cbcbb6c260de1e007e58c011bfebe2dafc8435107b0537f393dd38c8b1b"},
-]
-
-[[package]]
-name = "wslpath"
-version = "0.4.1"
-requires_python = ">=3.7"
-summary = "Python module to convert between Windows and POSIX path in WSL"
-groups = ["default"]
-files = [
-    {file = "wslPath-0.4.1-py3-none-any.whl", hash = "sha256:2816f190019d714943845e18f8da32a491b2d7a520c7511607d85c6584f6ef2d"},
-    {file = "wslPath-0.4.1.tar.gz", hash = "sha256:77644bd398fb57829f01db35c1d73b963e64c3ec3bd3e4f39bdb60ff43b1ebce"},
 ]

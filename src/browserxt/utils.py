@@ -1,3 +1,4 @@
+# mypy: disable-error-code = attr-defined
 import os
 import json
 import shutil
@@ -48,11 +49,11 @@ def get_nt_default_browser() -> str | None:
         import winreg
 
         try:
-            with winreg.OpenKey(  # type: ignore[attr-defined]
-                winreg.HKEY_CURRENT_USER,  # type: ignore[attr-defined]
+            with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
                 r"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice",
             ) as key:
-                prog_id = str(winreg.QueryValueEx(key, "Progid")[0])  # type: ignore[attr-defined]
+                prog_id = str(winreg.QueryValueEx(key, "Progid")[0])
                 return prog_id
         except FileNotFoundError:
             pass

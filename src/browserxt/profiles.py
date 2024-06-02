@@ -31,7 +31,6 @@ def get_profiles_path(
     create: bool = True,
     use_wsl: bool = False,
 ) -> tuple[str, str]:
-
     path = user_data_path
     full_path = path
     if os.name == "nt" or (is_running_in_wsl() and not use_wsl):

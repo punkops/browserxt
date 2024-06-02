@@ -59,7 +59,9 @@ class _globals:
         return (
             os.path.expanduser("~\\AppData\\Local")
             if self.IS_REAL_NT
-            else self._LOCAL_DATA if self.IS_NT else self.HOME
+            else self._LOCAL_DATA
+            if self.IS_NT
+            else self.HOME
         )
 
 

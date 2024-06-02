@@ -51,21 +51,11 @@ class _globals:
     WINDOWS_DRIVE = _PROGRAM_FILES.split("\\")[0] or HOME_DRIVE
 
     @property
-    def IS_NT(self):
-        """
-        Returns True if the operating system is Windows (nt) or Windows Subsystem for Linux (WSL),
-        and False otherwise.
-        """
+    def IS_NT(self) -> bool:
         return os.name == "nt" or (self.IS_WSL and not self.IGNORE_WINDOWS)
 
     @property
-    def LOCAL_DATA(self):
-        """
-        Returns the path to the local data directory based on the operating system.
-        On Windows, it returns the path to the user's AppData\Local directory.
-        On other systems, it returns the value of the _LOCAL_DATA attribute if the operating system is Windows,
-        otherwise it returns the user's home directory.
-        """
+    def LOCAL_DATA(self) -> str:
         return (
             os.path.expanduser("~\\AppData\\Local")
             if self.IS_REAL_NT

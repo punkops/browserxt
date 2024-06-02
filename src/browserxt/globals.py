@@ -49,7 +49,7 @@ class _globals:
             )
             .stdout.strip()
             .split("_")
-            if not IGNORE_WINDOWS
+            if not IGNORE_WINDOWS and IS_WSL
             else ["", ""]
         )
     )

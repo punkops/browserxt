@@ -5,7 +5,7 @@
 groups = ["default", "doc", "lint", "test"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:9b4c133b2214f3b91d846cec4f79632dc890ae521a856a7297da22d1e3053f4b"
+content_hash = "sha256:974b355d744f9978632143d9e60ecd193c058cef87c689f0416295b35d6fec74"
 
 [[package]]
 name = "alabaster"
@@ -1089,17 +1089,6 @@ files = [
     {file = "websockets-12.0-pp39-pypy39_pp73-win_amd64.whl", hash = "sha256:2cb388a5bfb56df4d9a406783b7f9dbefb888c09b71629351cc6b036e9259370"},
     {file = "websockets-12.0-py3-none-any.whl", hash = "sha256:dc284bbc8d7c78a6c69e0c7325ab46ee5e40bb4d50e494d8131a07ef47500e9e"},
     {file = "websockets-12.0.tar.gz", hash = "sha256:81df9cbcbb6c260de1e007e58c011bfebe2dafc8435107b0537f393dd38c8b1b"},
-]
-
-[[package]]
-name = "winregistry"
-version = "1.1.1"
-requires_python = ">=3.7,<4.0"
-summary = "Library aimed at working with Windows registry"
-groups = ["doc"]
-files = [
-    {file = "winregistry-1.1.1-py3-none-any.whl", hash = "sha256:ad4be5a488838266b4bf826712d640db3daadd1f97ba46820f834a98868b3bc1"},
-    {file = "winregistry-1.1.1.tar.gz", hash = "sha256:942fecad3751c1b78b9e6b0a520266903c3023f104668ce1bdbf381ec993ad8b"},
 ]
 
 [[package]]

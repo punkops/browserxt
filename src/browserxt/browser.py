@@ -18,10 +18,10 @@ class ExtensibleBrowser:
         name: str,
         path: str,
         options: list[str] = [],
-        family: str = "unknown",
         profile: str = "",
         user_data_path: str = "",
         create: bool = True,
+        family: str = "unknown",
     ) -> None:
         self.name = name
         self.family = family
@@ -73,10 +73,9 @@ class ChromiumBrowser(ExtensibleBrowser):
         profile: str = "",
         user_data_path: str = "",
         create: bool = True,
+        family: str = "chromium",
     ) -> None:
-        super().__init__(
-            name, path, options, "chromium", profile, user_data_path, create
-        )
+        super().__init__(name, path, options, profile, user_data_path, create, family)
 
     def set_profile_options(
         self,
@@ -101,10 +100,9 @@ class FirefoxBrowser(ExtensibleBrowser):
         profile: str = "",
         user_data_path: str = "",
         create: bool = True,
+        family: str = "firefox",
     ) -> None:
-        super().__init__(
-            name, path, options, "firefox", profile, user_data_path, create
-        )
+        super().__init__(name, path, options, profile, user_data_path, create, family)
 
     def set_profile_options(
         self,
@@ -117,7 +115,7 @@ class FirefoxBrowser(ExtensibleBrowser):
 
 class UnknownBrowser(ExtensibleBrowser):
     def __init__(self, name: str, path: str, options: list[str] = []) -> None:
-        super().__init__(name, path, options)
+        super().__init__(name, path, options, family="unknown")
 
 
 def get_browser_class(
@@ -176,12 +174,12 @@ class Browser:
             self.register(
                 name,
                 get_browser_class(family)(
-                    name,
-                    path,
-                    self.options,
-                    self._profile,
-                    self._user_data_path,
-                    self._create,
+                    name=name,
+                    path=path,
+                    options=self.options,
+                    profile=self._profile,
+                    user_data_path=self._user_data_path,
+                    create=self._create,
                 ),
             )
         default_instance = self._browsers.get(default, None)

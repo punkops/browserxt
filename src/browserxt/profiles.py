@@ -9,37 +9,33 @@ def get_profiles_path(
     type: str,
     user_data_path: str = "",
     create: bool = True,
-) -> tuple[str, str]:
+) -> str:
     path = user_data_path
-    full_path = path
     if GLOBALS.IS_NT:
         if path == "":
-            path = f"{GLOBALS.LOCAL_DATA}\\browserxt\\{type}"
-        full_path = f"{path}\\{name}"
+            path = f"{GLOBALS.LOCAL_DATA}\\browserxt\\{type}\\{name}"
         if GLOBALS.IS_WSL and create:
-            os.makedirs(nt_to_wsl_path(full_path), exist_ok=True)
-            return full_path, path
+            os.makedirs(nt_to_wsl_path(path), exist_ok=True)
+            return path
     else:
         if path == "":
-            path = f"{GLOBALS.HOME}/.cache/browserxt/{type}"
+            path = f"{GLOBALS.HOME}/.cache/browserxt/{type}/{name}"
             path = path
-        full_path = f"{path}/{name}"
 
     if create:
-        os.makedirs(full_path, exist_ok=True)
+        os.makedirs(path, exist_ok=True)
 
-    return full_path, path
+    return path
 
 
 def get_chromium_profile_options(
     name: str,
     user_data_path: str = "",
 ) -> list[str]:
-    _, path = get_profiles_path(name, "chromium", user_data_path, create=True)
+    path = get_profiles_path(name, "chromium", user_data_path, create=True)
 
     options = [
         f"--user-data-dir={path}",
-        f"--profile-directory={name}",
         "--no-first-run",
         "--no-default-browser-check",
         "--disable-background-networking",
@@ -68,11 +64,11 @@ def get_firefox_profile_options(
     name: str,
     user_data_path: str = "",
 ) -> list[str]:
-    full_path, _ = get_profiles_path(name, "firefox", user_data_path, create=True)
+    path = get_profiles_path(name, "firefox", user_data_path, create=True)
 
     options = [
         "--profile",
-        full_path,
+        path,
         "-P",
         name,
         "--new-tab",

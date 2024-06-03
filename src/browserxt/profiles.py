@@ -31,8 +31,9 @@ def get_profiles_path(
 def get_chromium_profile_options(
     name: str,
     user_data_path: str = "",
+    create: bool = True,
 ) -> list[str]:
-    path = get_profiles_path(name, "chromium", user_data_path, create=True)
+    path = get_profiles_path(name, "chromium", user_data_path, create)
 
     options = [
         f"--user-data-dir={path}",
@@ -63,8 +64,9 @@ def get_chromium_profile_options(
 def get_firefox_profile_options(
     name: str,
     user_data_path: str = "",
+    create: bool = True,
 ) -> list[str]:
-    path = get_profiles_path(name, "firefox", user_data_path, create=True)
+    path = get_profiles_path(name, "firefox", user_data_path, create)
 
     options = [
         "--profile",

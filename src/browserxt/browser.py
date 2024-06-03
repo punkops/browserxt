@@ -1,4 +1,5 @@
 import os
+import tempfile
 import subprocess
 
 from browserxt.utils import nt_to_wsl_path, sort_tryoder, detect_standard_browsers
@@ -20,19 +21,25 @@ class ExtensibleBrowser:
         family: str = "unknown",
         profile: str = "",
         user_data_path: str = "",
+        create: bool = True,
     ) -> None:
         self.name = name
         self.family = family
         self.path = path
         self.set_options(options.copy())
         if profile != "":
-            self.set_profile_options(profile, user_data_path)
+            self.set_profile_options(profile, user_data_path, create)
 
     def set_options(self, options: list[str]) -> None:
         self.options = options
 
     # Dummy method to be overridden by subclasses
-    def set_profile_options(self, name: str, user_data_path: str = "") -> None:
+    def set_profile_options(
+        self,
+        name: str,
+        user_data_path: str = "",
+        create: bool = True,
+    ) -> None:
         pass
 
     def is_running_in_wsl(self) -> bool:
@@ -65,11 +72,19 @@ class ChromiumBrowser(ExtensibleBrowser):
         options: list[str] = [],
         profile: str = "",
         user_data_path: str = "",
+        create: bool = True,
     ) -> None:
-        super().__init__(name, path, options, "chromium", profile, user_data_path)
+        super().__init__(
+            name, path, options, "chromium", profile, user_data_path, create
+        )
 
-    def set_profile_options(self, name: str, user_data_path: str = "") -> None:
-        self.options += get_chromium_profile_options(name, user_data_path)
+    def set_profile_options(
+        self,
+        name: str,
+        user_data_path: str = "",
+        create: bool = True,
+    ) -> None:
+        self.options += get_chromium_profile_options(name, user_data_path, create)
 
     def set_options(self, options: list[str]) -> None:
         super().set_options(options)
@@ -85,11 +100,19 @@ class FirefoxBrowser(ExtensibleBrowser):
         options: list[str] = [],
         profile: str = "",
         user_data_path: str = "",
+        create: bool = True,
     ) -> None:
-        super().__init__(name, path, options, "firefox", profile, user_data_path)
+        super().__init__(
+            name, path, options, "firefox", profile, user_data_path, create
+        )
 
-    def set_profile_options(self, name: str, user_data_path: str = "") -> None:
-        self.options += get_firefox_profile_options(name, user_data_path)
+    def set_profile_options(
+        self,
+        name: str,
+        user_data_path: str = "",
+        create: bool = True,
+    ) -> None:
+        self.options += get_firefox_profile_options(name, user_data_path, create)
 
 
 class UnknownBrowser(ExtensibleBrowser):
@@ -115,6 +138,8 @@ class Browser:
         ignore_default: bool = False,
         profile: str = "",
         user_data_path: str = "",
+        create: bool = True,
+        tmp_profile: bool = False,
     ) -> None:
         self.options = options.copy()
         self._platform = os.name
@@ -124,6 +149,22 @@ class Browser:
         self._browsers: dict[str, ExtensibleBrowser] = {}
         self._profile = profile
         self._user_data_path = user_data_path
+        self._create = create
+        if tmp_profile:
+            _base: str = ""
+            _temp: str = ""
+            if GLOBALS.IS_NT and GLOBALS.IS_WSL:
+                _temp = tempfile.mkdtemp(
+                    dir=nt_to_wsl_path(f"{GLOBALS.LOCAL_DATA}\\Temp")
+                )
+                _base = os.path.basename(_temp)
+                _temp = f"{GLOBALS.LOCAL_DATA}\\Temp\\{_base}"
+            else:
+                _temp = tempfile.mkdtemp()
+                _base = os.path.basename(_temp)
+            self._profile = _base
+            self._user_data_path = _temp
+            self._create = False
         self.detect_browsers()
         self._tryorder = sort_tryoder(self._tryorder)
 
@@ -135,7 +176,12 @@ class Browser:
             self.register(
                 name,
                 get_browser_class(family)(
-                    name, path, self.options, self._profile, self._user_data_path
+                    name,
+                    path,
+                    self.options,
+                    self._profile,
+                    self._user_data_path,
+                    self._create,
                 ),
             )
         default_instance = self._browsers.get(default, None)

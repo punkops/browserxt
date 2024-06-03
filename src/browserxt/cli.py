@@ -34,6 +34,11 @@ def main(
     ignore_default: bool = Option(
         False, "--ignore-default", help="Ignore the default browser"
     ),
+    temp_profile: bool = Option(
+        False,
+        "--tmp",
+        help="Create a new secure temporary browser profile, similar to incognito mode but with a new profile each time",
+    ),
     profile: str = Option(
         "",
         "-p",
@@ -79,6 +84,8 @@ def main(
             ignore_default,
             profile,
             profile_path,
+            True,
+            temp_profile,
         )
         if not _browser.open(url):
             raise Exception("No browser detected")

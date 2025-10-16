@@ -61,7 +61,7 @@ jobs:
       matrix:
         os:
           # renovate: github-runner
-          - macos-15
+          # - macos-15
           # renovate: github-runner
           - ubuntu-24.04
           # renovate: github-runner

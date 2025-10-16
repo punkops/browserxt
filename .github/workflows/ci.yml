@@ -41,9 +41,9 @@ jobs:
         with:
           cache: true
           python-version: ${{ matrix.python-version }}
-          version: 2.15.2
+          version: latest
 
-      # Set PyO3 compatibility for Python 3.13
+      # Set PyO3 compatibility for Python 3.12
       - name: Set PyO3 compatibility
         run: echo "PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1" >> $GITHUB_ENV
         shell: bash
@@ -58,17 +58,17 @@ jobs:
       matrix:
         os:
           # renovate: github-runner
-          - macos-14
+          - macos-15
           # renovate: github-runner
-          - ubuntu-22.04
+          - ubuntu-24.04
           # renovate: github-runner
-          - windows-2022
+          - windows-2025
         python-version:
           - '3.12'
 
   semantic-release:
     name: Semantic Release
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     # Avoid semantic release for forked repository
     if: github.event_name != 'pull_request' && github.repository == 'serious-scaffold/ss-python'
     permissions:

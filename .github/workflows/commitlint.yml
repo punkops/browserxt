@@ -6,7 +6,7 @@ jobs:
   commitlint:
     container:
       image: commitlint/commitlint:19.3.1@sha256:02c8c31b2c61c51eadb410960648c8b370f7583609f4ca1520155eeeefd63d66
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - run: env | sort
       - name: Validate the latest commit message with commitlint

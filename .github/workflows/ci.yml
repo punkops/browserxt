@@ -42,7 +42,7 @@ jobs:
           # renovate: github-runner
           - windows-2022
         python-version:
-          - '3.11'
+          - '3.13'
   semantic-release:
     name: Semantic Release
     runs-on: ubuntu-22.04

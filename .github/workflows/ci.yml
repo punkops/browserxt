@@ -21,11 +21,33 @@ jobs:
       - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
         with:
           fetch-depth: 0
+
+      # Install Rust toolchain for building PyO3-based packages
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          cache: false  # Let PDM handle Python caching
+
+      # Install system dependencies for lxml on Linux
+      - name: Install system dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libxml2-dev libxslt-dev
+
+      # Install system dependencies for lxml on macOS
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: brew install libxml2 libxslt
+
       - uses: pdm-project/setup-pdm@568ddd69406b30de1774ec0044b73ae06e716aa4 # v4
         with:
           cache: true
           python-version: ${{ matrix.python-version }}
           version: 2.15.2
+
+      # Set PyO3 compatibility for Python 3.13
+      - name: Set PyO3 compatibility
+        run: echo "PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1" >> $GITHUB_ENV
+        shell: bash
+
       - run: env | sort
       - run: make dev
       - run: make lint
@@ -42,7 +64,8 @@ jobs:
           # renovate: github-runner
           - windows-2022
         python-version:
-          - '3.12'
+          - '3.13'
+
   semantic-release:
     name: Semantic Release
     runs-on: ubuntu-22.04

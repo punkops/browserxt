@@ -42,10 +42,6 @@ jobs:
           cache: true
           python-version: ${{ matrix.python-version }}
 
-      # Configure PDM to prefer binary packages
-      - name: Configure PDM to prefer binary packages
-        run: pdm config install.prefer-binary true
-
       # Set PyO3 compatibility for Python 3.12
       - name: Set PyO3 compatibility
         run: echo "PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1" >> $GITHUB_ENV

@@ -20,7 +20,6 @@ jobs:
         with:
           cache: true
           python-version: '3.12'
-          version: 2.15.2
       - run: env | sort
       - run: make dev-doc
       - run: make doc

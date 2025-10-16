@@ -41,7 +41,6 @@ jobs:
         with:
           cache: true
           python-version: ${{ matrix.python-version }}
-          version: latest
 
       # Set PyO3 compatibility for Python 3.12
       - name: Set PyO3 compatibility

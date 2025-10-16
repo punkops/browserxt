@@ -34,6 +34,12 @@ NT_BROWSERS = (
                 f"{GLOBALS.LOCAL_DATA}\\BraveSoftware\\Brave-Browser\\Application\\brave.exe",
             ],
         },
+        "helium": {
+            "family": "chromium",
+            "paths": [
+                f"{GLOBALS.LOCAL_DATA}\\imput\\Helium\\Application\\chrome.exe",
+            ],
+        },
         "opera": {
             "family": "chromium",
             "paths": [
@@ -94,6 +100,15 @@ POSIX_BROWSERS = {
         ],
         "family": "chromium",
     },
+    "helium": {
+        "paths": [
+            "helium",
+            "helium-browser",
+            "helium-browser-stable",
+            "/Applications/Helium.app/Contents/MacOS/Helium",
+        ],
+        "family": "chromium",
+    },
     "edge": {
         "paths": [
             "microsoft-edge",
@@ -111,19 +126,20 @@ POSIX_BROWSERS = {
     "vivaldi": {
         "paths": ["vivaldi", "/Applications/Vivaldi.app/Contents/MacOS/Vivaldi"],
         "family": "chromium",
-    },
+    }
 }
 
 # Default order for browsers to check, chosen according to popularity (kind of)
 DEFAULT_SORTING = [
     "default",
-    "chrome",
+    "helium",
     "chromium",
     "firefox",
     "brave",
-    "opera",
+    "chrome",
     "vivaldi",
     "edge",
+    "opera",
     "safari",
     "unknown",
 ]
